@@ -2,12 +2,14 @@ import { useState } from "react";
 import { getLocation } from "./services/geocoding";
 import SearchLocation from "./components/SearchLocation";
 import { LocationResult } from "./services/geocoding.types";
+import LocationResults from "./components/LocationResults";
 
 function App() {
 	const [locationResults, setLocationResults] = useState<
 		LocationResult[] | null
 	>(null);
-	const handleSubmit = async (location: string) => {
+
+	const handleSearchSubmit = async (location: string) => {
 		try {
 			const data = await getLocation(location);
 			setLocationResults(data);
@@ -25,26 +27,8 @@ function App() {
 					<h1>Kolla vädret idag</h1>
 					<button>celcius</button>
 				</div>
-				<SearchLocation onSearch={handleSubmit} />
-				{/* search results*/}
-				<div className="results-wrapper">
-					<div className="wrapper">
-						<span>ortsnamn</span>
-						<span>område</span>
-						<span>land</span>
-					</div>
-					<ul className="list" aria-label="list of locations">
-						{locationResults &&
-							locationResults.map((item) => (
-								<li key={item.id} className="list-item">
-									<span>{item.name}, </span>
-									<span>{item.admin1}, </span>
-									<span>{item.country}</span>
-								</li>
-							))}
-					</ul>
-				</div>
-				{/* weather results*/}
+				<SearchLocation onSearch={handleSearchSubmit} />
+				<LocationResults LocationResults={locationResults} />
 				<div className="weater">
 					<div className="weather-results-header">
 						<h2>Place...</h2>
