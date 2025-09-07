@@ -1,4 +1,23 @@
+import { useState } from "react";
+import { getLocation } from "./services/geocoding";
+import SearchLocation from "./components/SearchLocation";
+import { LocationResult } from "./services/geocoding.types";
+
 function App() {
+	const [locationResults, setLocationResults] = useState<
+		LocationResult[] | null
+	>(null);
+	const handleSubmit = async (location: string) => {
+		try {
+			const data = await getLocation(location);
+			setLocationResults(data);
+		} catch (err) {
+			if (err instanceof Error) {
+				console.log(err.message);
+			}
+		}
+	};
+
 	return (
 		<>
 			<div className="container">
@@ -6,18 +25,7 @@ function App() {
 					<h1>Kolla vädret idag</h1>
 					<button>celcius</button>
 				</div>
-				{/* search form*/}
-				<div className="search-wrapper">
-					<form className="search-form">
-						<input
-							type="text"
-							placeholder="Ange plats att söka upp"
-							aria-label="Stad"
-							aria-details="Sök efter stad för att visa aktuellt väder"
-						/>
-						<button type="submit">Sök</button>
-					</form>
-				</div>
+				<SearchLocation onSearch={handleSubmit} />
 				{/* search results*/}
 				<div className="results-wrapper">
 					<div className="wrapper">
@@ -25,19 +33,26 @@ function App() {
 						<span>område</span>
 						<span>land</span>
 					</div>
-					<ul className="list" aria-label="Stad lister">
-						<li aria-label="stad">ort resultater...</li>
+					<ul className="list" aria-label="list of locations">
+						{locationResults &&
+							locationResults.map((item) => (
+								<li key={item.id} className="list-item">
+									<span>{item.name}, </span>
+									<span>{item.admin1}, </span>
+									<span>{item.country}</span>
+								</li>
+							))}
 					</ul>
 				</div>
 				{/* weather results*/}
-				<div className="weather-results-wrapper">
+				<div className="weater">
 					<div className="weather-results-header">
 						<h2>Place...</h2>
 						<span>time</span>
 					</div>
-					<div>
+					<div className="test">
 						<h3>5-dygnsprognos</h3>
-						<div>
+						<div className="wrapper">
 							{/* today */}
 							<div>
 								<div>

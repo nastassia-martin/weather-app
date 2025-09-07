@@ -93,10 +93,6 @@ svg {
 	justify-content: space-between;
 }
 
-.test {
-	border: 1px solid black;
-	padding-inline: 2rem;
-}
 @media (prefers-color-scheme: light) {
 	:root {
 		color: #213547;
