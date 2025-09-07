@@ -1,23 +1,31 @@
 import { LocationResult } from "../services/geocoding.types";
 
 interface LocationResultsProps {
-	LocationResults: LocationResult[] | null;
+	locationResults: LocationResult[] | null;
+	onClick: (latitude: number, longitude: number, timezone: string) => void;
 }
-
 const LocationResults: React.FC<LocationResultsProps> = ({
-	LocationResults,
+	locationResults,
+	onClick,
 }) => {
 	return (
-		<ul className="list" aria-label="list of locations">
-			{LocationResults &&
-				LocationResults.map((item) => (
+		locationResults && (
+			<ul className="list" role="listbox" aria-label="list of locations">
+				{locationResults.map((item) => (
 					<li key={item.id} className="list-item">
-						<span>{item.name}, </span>
-						<span>{item.admin1}, </span>
-						<span>{item.country}</span>
+						<button
+							onClick={() =>
+								onClick(item.latitude, item.longitude, item.timezone)
+							}
+						>
+							<span>{item.name}, </span>
+							<span>{item.admin1}, </span>
+							<span>{item.country}</span>
+						</button>
 					</li>
 				))}
-		</ul>
+			</ul>
+		)
 	);
 };
 
