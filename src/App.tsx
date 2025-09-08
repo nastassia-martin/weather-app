@@ -6,12 +6,16 @@ import LocationResults from "./components/LocationResults";
 import { getForecast } from "./services/weatherforecast";
 import { WeatherResponse } from "./services/weatherforecast.types";
 import WeatherForecast from "./components/WeatherForecast";
+import useLocalStorage from "./hooks/useLocalStorage";
+import Header from "./components/Header";
 
 interface SelectedLocation {
 	data: WeatherResponse;
 	location: string;
 	locationCountry: string;
 }
+
+export type TemperatureUnit = "celsius" | "fahrenheit";
 
 function App() {
 	const [locationResults, setLocationResults] = useState<
@@ -20,6 +24,9 @@ function App() {
 
 	const [selectedLocation, setSelectedLocation] =
 		useState<SelectedLocation | null>(null);
+
+	const [temperatureUnit, setTemperatureUnit] =
+		useLocalStorage<TemperatureUnit>("celsius", "tempunit");
 
 	const handleSearchSubmit = async (location: string) => {
 		try {
@@ -40,7 +47,12 @@ function App() {
 		locationCountry: string
 	) => {
 		try {
-			const data = await getForecast(latitude, longitude, timezone, "celsius");
+			const data = await getForecast(
+				latitude,
+				longitude,
+				timezone,
+				temperatureUnit
+			);
 			setSelectedLocation({ data, location, locationCountry });
 		} catch (err) {
 			if (err instanceof Error) {
@@ -50,27 +62,30 @@ function App() {
 		setLocationResults(null);
 	};
 
+	const handleToggleTempUnit = (toggle: TemperatureUnit) => {
+		const updatedTemp = toggle === "celsius" ? "fahrenheit" : "celsius";
+		setTemperatureUnit(updatedTemp);
+	};
+
 	return (
-		<>
-			<div className="container">
-				<div className="wrapper">
-					<h1>Kolla vädret idag</h1>
-					<button>celsius</button>
-				</div>
-				<SearchLocation onSearch={handleSearchSubmit} />
-				<LocationResults
-					locationResults={locationResults}
-					onClick={handleLocationClick}
+		<main className="container">
+			<Header
+				temperatureUnit={temperatureUnit}
+				onHeaderClick={handleToggleTempUnit}
+			/>
+			<SearchLocation onSearch={handleSearchSubmit} />
+			<LocationResults
+				locationResults={locationResults}
+				onClick={handleLocationClick}
+			/>
+			{selectedLocation && (
+				<WeatherForecast
+					weatherResults={selectedLocation.data}
+					location={selectedLocation.location}
+					locationCountry={selectedLocation.locationCountry}
 				/>
-				{selectedLocation && (
-					<WeatherForecast
-						weatherResults={selectedLocation.data}
-						location={selectedLocation.location}
-						locationCountry={selectedLocation.locationCountry}
-					/>
-				)}
-			</div>
-		</>
+			)}
+		</main>
 	);
 }
 
