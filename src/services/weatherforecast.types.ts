@@ -20,6 +20,7 @@ interface CurrentUnits {
 	wind_speed_10m: string; // "km/h"
 	apparent_temperature: string; // e.g. "°C"
 	precipitation: string; // "mm"
+	relative_humidity_2m: string; // %
 }
 
 export interface CurrentWeather {
@@ -30,6 +31,8 @@ export interface CurrentWeather {
 	wind_speed_10m: number;
 	apparent_temperature: number;
 	precipitation: number;
+	is_day: 0 | 1;
+	relative_humidity_2m: number;
 }
 
 interface DailyUnits {

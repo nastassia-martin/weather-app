@@ -24,12 +24,12 @@ export const getForecast = async (
 	temperature_unit: string
 ) => {
 	const response = await fetch(
-		`${WEATHERFORECASTURL}/?latitude=${latitude}&longitude=${longitude}&
-        timezone=${timezone}&
-        current=temperature_2m,weather_code,wind_speed_10m,apparent_temperature,precipitation&
-        daily=weather_code,apparent_temperature_min,apparent_temperature_max&
-        forecast_days=5&
-        temperature_unit=${temperature_unit}`
+		`${WEATHERFORECASTURL}?latitude=${latitude}&
+		longitude=${longitude}&
+		timezone=${timezone}&
+		current=temperature_2m,weather_code,wind_speed_10m,apparent_temperature,precipitation,is_day,relative_humidity_2m&
+		daily=weather_code,apparent_temperature_min,apparent_temperature_max&forecast_days=5&
+		temperature_unit=${temperature_unit}`
 	);
 
 	if (!response.ok) {
