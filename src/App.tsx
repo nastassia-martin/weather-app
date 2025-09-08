@@ -28,15 +28,21 @@ function App() {
 	const [temperatureUnit, setTemperatureUnit] =
 		useLocalStorage<TemperatureUnit>("celsius", "tempunit");
 
+	const [isLoading, setIsLoading] = useState(false);
+	const [error, setError] = useState<string | false>(false);
+
 	const handleSearchSubmit = async (location: string) => {
+		setError(false);
+		setIsLoading(true);
 		try {
 			const data = await getLocation(location);
 			setLocationResults(data);
 		} catch (err) {
 			if (err instanceof Error) {
-				console.log(err.message);
+				setError(err.message);
 			}
 		}
+		setIsLoading(false);
 	};
 
 	const handleLocationClick = async (
@@ -46,6 +52,8 @@ function App() {
 		location: string,
 		locationCountry: string
 	) => {
+		setError(false);
+		setIsLoading(true);
 		try {
 			const data = await getForecast(
 				latitude,
@@ -56,10 +64,11 @@ function App() {
 			setSelectedLocation({ data, location, locationCountry });
 		} catch (err) {
 			if (err instanceof Error) {
-				console.log(err.message);
+				setError(err.message);
 			}
 		}
 		setLocationResults(null);
+		setIsLoading(false);
 	};
 
 	const handleToggleTempUnit = (toggle: TemperatureUnit) => {
@@ -74,6 +83,10 @@ function App() {
 				onHeaderClick={handleToggleTempUnit}
 			/>
 			<SearchLocation onSearch={handleSearchSubmit} />
+
+			{isLoading && <span>loading...</span>}
+			{error && <span>{error}</span>}
+
 			<LocationResults
 				locationResults={locationResults}
 				onClick={handleLocationClick}

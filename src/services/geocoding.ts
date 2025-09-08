@@ -24,9 +24,11 @@ export const getLocation = async (place: string) => {
 		throw new Error(`${response.status} ${response.statusText}`);
 	}
 
-	const { results: data }: { results: LocationResult[] } =
-		await response.json();
+	const data: { results: LocationResult[] } = await response.json();
 
-	// Return location
-	return data;
+	if (response.ok && !data.results) {
+		throw new Error("Location not found");
+	}
+	// Return location [{}]
+	return data.results;
 };
